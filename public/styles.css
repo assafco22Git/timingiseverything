@@ -209,6 +209,15 @@ header .tagline {
   gap: 0.5rem;
 }
 
+.lobby.hidden {
+  display: none;
+}
+
+.lobby .avatar-picker button .emoji-icon {
+  font-size: 1.8rem;
+  display: block;
+}
+
 .lobby .avatar-picker button {
   flex: 1;
   border-radius: 10px;

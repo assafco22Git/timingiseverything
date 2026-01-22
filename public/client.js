@@ -1,4 +1,5 @@
-const socket = new WebSocket(((window.location.protocol === 'https:') ? 'wss://' : 'ws://') + window.location.host);
+const defaultSocketUrl = ((window.location.protocol === 'https:') ? 'wss://' : 'ws://') + window.location.host;
+const socket = new WebSocket(window.RUN_FOR_YOUR_LIFE_WS_URL || defaultSocketUrl);
 
 const lobby = document.getElementById('lobby');
 const joinForm = document.getElementById('joinForm');
@@ -15,13 +16,35 @@ const trackBoard = document.getElementById('trackBoard');
 const scoreBoard = document.getElementById('scoreBoard');
 const tapButton = document.getElementById('tapButton');
 
+function buildEmojiAvatar(emoji, bg, fill) {
+  const payload = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+      <rect width="128" height="128" rx="20" fill="${bg}" />
+      <text x="64" y="86" text-anchor="middle" font-size="64" font-family="Segoe UI" fill="${fill}">${emoji}</text>
+    </svg>
+  `.trim();
+  return `data:image/svg+xml;utf8,${encodeURIComponent(payload)}`;
+}
+
 const sampleAvatars = [
-  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"%3E%3Crect width="128" height="128" rx="20" fill="%2303081c"/%3E%3Ctext x="64" y="85" text-anchor="middle" font-size="64" font-family="Segoe UI" fill="%23ffbe0b"%3E🏃%3C/text%3E%3C/svg%3E',
-  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"%3E%3Crect width="128" height="128" rx="20" fill="%23031d2a"/%3E%3Ctext x="64" y="78" text-anchor="middle" font-size="62" font-family="Segoe UI" fill="%23f26b38"%3E🤪%3C/text%3E%3C/svg%3E',
-  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"%3E%3Crect width="128" height="128" rx="20" fill="%23000d16"/%3E%3Ctext x="64" y="80" text-anchor="middle" font-size="62" font-family="Segoe UI" fill="%2391e5f6"%3E🦸%3C/text%3E%3C/svg%3E'
+  {
+    label: 'Runner',
+    emoji: '🏃',
+    src: buildEmojiAvatar('🏃', '#03081c', '#ffbe0b'),
+  },
+  {
+    label: 'Wild eyes',
+    emoji: '🤪',
+    src: buildEmojiAvatar('🤪', '#031d2a', '#f26b38'),
+  },
+  {
+    label: 'Hero',
+    emoji: '🦸',
+    src: buildEmojiAvatar('🦸', '#000d16', '#91e5f6'),
+  },
 ];
 
-let selectedAvatar = sampleAvatars[0];
+let selectedAvatar = sampleAvatars[0].src;
 let playerId = null;
 let hostId = null;
 let roundState = null;
@@ -32,16 +55,17 @@ avatarPreview.src = selectedAvatar;
 
 function renderAvatarOptions() {
   avatarOptions.innerHTML = '';
-  sampleAvatars.forEach((src, index) => {
+  sampleAvatars.forEach((avatar) => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.innerHTML = `<img src="${src}" alt="avatar" width="48" height="48" />`;
-    if (selectedAvatar === src) {
+    btn.title = avatar.label;
+    btn.innerHTML = `<span class="emoji-icon">${avatar.emoji}</span>`;
+    if (selectedAvatar === avatar.src) {
       btn.classList.add('active');
     }
     btn.addEventListener('click', () => {
-      selectedAvatar = src;
-      avatarPreview.src = src;
+      selectedAvatar = avatar.src;
+      avatarPreview.src = avatar.src;
       avatarOptions.querySelectorAll('button').forEach((button) => button.classList.remove('active'));
       btn.classList.add('active');
       avatarUpload.value = '';
