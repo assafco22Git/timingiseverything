@@ -258,6 +258,16 @@ header .tagline {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.lobby form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lobby form label input {
+  width: 100%;
+}
+
 .lobby h2 {
   margin: 0;
   font-size: 1.4rem;
