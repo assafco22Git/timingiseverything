@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Run For Your Life</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="lobby" id="lobby">
+      <form id="joinForm">
+        <h2>Run For Your Life</h2>
+        <p>
+          Real-time tap race. Upload a silly photo, tap like crazy, and try not to be the
+          slowest to escape.
+        </p>
+        <label>
+          Your name
+          <input type="text" id="playerName" placeholder="Type something wild" required />
+        </label>
+        <div>
+          <div class="avatar-picker" id="avatarOptions"></div>
+          <input type="file" id="avatarUpload" accept="image/*" />
+        </div>
+        <img alt="Current avatar" id="avatarPreview" class="avatar-preview" src="" />
+        <button type="submit">Join lobby</button>
+        <p class="status-line" id="joinStatus"></p>
+      </form>
+    </div>
+
+    <main>
+      <header>
+        <div>
+          <h1>Run For Your Life</h1>
+          <p class="tagline">Escape the attack by tapping the fastest.</p>
+        </div>
+        <div class="timer" id="timerDisplay">Waiting for round...</div>
+      </header>
+
+      <section class="controls">
+        <label>
+          Round duration
+          <input type="number" id="durationInput" min="5" max="60" value="10" step="1" />
+          <small>seconds</small>
+        </label>
+        <button id="startRoundButton" type="button" disabled>Start round (host only)</button>
+        <div class="status-chip" id="roundStatus">Lobby</div>
+      </section>
+
+      <section class="track-board" id="trackBoard"></section>
+
+      <section class="scoreboard" id="scoreBoard"></section>
+
+      <button id="tapButton" disabled>Tap! Run!</button>
+    </main>
+
+    <script type="module" src="/client.js"></script>
+  </body>
+</html>
