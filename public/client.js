@@ -14,6 +14,10 @@ const roundStatus = document.getElementById('roundStatus');
 const timerDisplay = document.getElementById('timerDisplay');
 const trackBoard = document.getElementById('trackBoard');
 const scoreBoard = document.getElementById('scoreBoard');
+const resultCard = document.getElementById('resultCard');
+const resultBody = document.getElementById('resultBody');
+const resultTitle = document.getElementById('resultTitle');
+const resultDismiss = document.getElementById('resultDismiss');
 const tapButton = document.getElementById('tapButton');
 
 function buildEmojiAvatar(emoji, bg, fill) {
@@ -50,6 +54,7 @@ let hostId = null;
 let roundState = null;
 let roundResult = null;
 let countdownTimer = null;
+let resultTimeout = null;
 
 avatarPreview.src = selectedAvatar;
 
@@ -139,6 +144,39 @@ function updateTimerDisplay() {
   }
 }
 
+function hideResultCard() {
+  if (resultTimeout) {
+    clearTimeout(resultTimeout);
+    resultTimeout = null;
+  }
+  resultCard?.classList.add('hidden');
+}
+
+function renderRoundResult(result, players) {
+  if (!result || !players.length) {
+    hideResultCard();
+    return;
+  }
+  const findName = (id) => players.find((p) => p.id === id)?.name || 'Unknown';
+  const winners = result.winners.map(findName).join(', ') || '—';
+  const losers = result.losers.map(findName).join(', ') || '—';
+  resultTitle.textContent = `Winners: ${winners} • Losers: ${losers}`;
+  resultBody.innerHTML = players
+    .map((player) => {
+      const badges = [];
+      if (result.winners.includes(player.id)) badges.push('Winner');
+      if (result.losers.includes(player.id)) badges.push('Loser');
+      const badgeText = badges.length ? ` (${badges.join(' • ')})` : '';
+      return `<span>${player.name}${badgeText} — ${player.taps} taps • ${player.wins}W • ${player.losses}L</span>`;
+    })
+    .join('');
+  resultCard?.classList.remove('hidden');
+  if (resultTimeout) {
+    clearTimeout(resultTimeout);
+  }
+  resultTimeout = setTimeout(hideResultCard, 6000);
+}
+
 function updateUI(state) {
   hostId = state.hostId;
   roundState = state.round;
@@ -215,6 +253,8 @@ function updateUI(state) {
     scoreBoard.appendChild(card);
   });
 
+  renderRoundResult(roundResult, state.players);
+
   if (primaryPlayer) {
     tapButton.textContent = roundState.inProgress ? 'Tap! Run!' : 'Waiting for round...';
   }
@@ -288,3 +328,5 @@ durationInput.addEventListener('change', () => {
 tapButton.addEventListener('click', () => {
   send({ type: 'tap' });
 });
+
+resultDismiss?.addEventListener('click', hideResultCard);

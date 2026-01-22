@@ -178,6 +178,46 @@ header .tagline {
   font-size: 1.25rem;
 }
 
+.result-card {
+  background: rgba(9, 9, 11, 0.9);
+  color: var(--light);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  margin-top: 1rem;
+  max-width: 420px;
+  width: 100%;
+}
+
+.result-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.result-card__body {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.result-card button {
+  border: none;
+  background: transparent;
+  color: var(--accent-strong);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.result-card.hidden {
+  display: none;
+}
+
 .lobby {
   position: fixed;
   inset: 0;

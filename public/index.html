@@ -51,11 +51,21 @@
 
       <section class="scoreboard" id="scoreBoard"></section>
 
+      <div class="result-card hidden" id="resultCard">
+        <div class="result-card__header">
+          <span id="resultTitle">Round results</span>
+          <button type="button" id="resultDismiss">Close</button>
+        </div>
+        <div class="result-card__body" id="resultBody"></div>
+      </div>
+
       <button id="tapButton" disabled>Tap! Run!</button>
     </main>
 
     <script>
-      window.RUN_FOR_YOUR_LIFE_WS_URL = 'wss://timingiseverything.onrender.com';
+      if (window.location.host.includes('vercel.app')) {
+        window.RUN_FOR_YOUR_LIFE_WS_URL = 'wss://timingiseverything.onrender.com';
+      }
     </script>
     <script type="module" src="/client.js"></script>
   </body>
