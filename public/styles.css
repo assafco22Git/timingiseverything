@@ -240,7 +240,7 @@ header .tagline {
 .lobby {
   position: fixed;
   inset: 0;
-  background: rgba(9, 9, 11, 0.92);
+  background: #08080c;
   display: flex;
   align-items: center;
   justify-content: center;
