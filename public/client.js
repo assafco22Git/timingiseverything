@@ -18,6 +18,11 @@ const resultCard = document.getElementById('resultCard');
 const resultBody = document.getElementById('resultBody');
 const resultTitle = document.getElementById('resultTitle');
 const resultDismiss = document.getElementById('resultDismiss');
+const roundOverlay = document.getElementById('roundOverlay');
+const overlayTitle = document.getElementById('overlayTitle');
+const overlaySubtitle = document.getElementById('overlaySubtitle');
+const overlayContinue = document.getElementById('overlayContinue');
+const confettiContainer = document.getElementById('confettiContainer');
 const tapButton = document.getElementById('tapButton');
 
 function setLobbyVisibility(isVisible) {
@@ -60,6 +65,7 @@ let roundResult = null;
 let countdownTimer = null;
 setLobbyVisibility(true);
 let resultTimeout = null;
+let overlayVisible = false;
 
 avatarPreview.src = selectedAvatar;
 
@@ -128,6 +134,63 @@ function clearCountdown() {
   }
 }
 
+function clearConfetti() {
+  if (confettiContainer) {
+    confettiContainer.innerHTML = '';
+  }
+}
+
+function emitConfetti() {
+  if (!confettiContainer) {
+    return;
+  }
+  clearConfetti();
+  const count = 28;
+  for (let i = 0; i < count; i += 1) {
+    const piece = document.createElement('span');
+    const delay = (Math.random() * 1.5).toFixed(2);
+    const left = Math.random() * 100;
+    piece.style.left = `${left}%`;
+    piece.style.animationDelay = `${delay}s`;
+    piece.style.animationDuration = `${2 + Math.random()}s`;
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    confettiContainer.appendChild(piece);
+  }
+}
+
+function setOverlayVisibility(isVisible) {
+  if (!roundOverlay) {
+    return;
+  }
+  roundOverlay.classList.toggle('hidden', !isVisible);
+  document.body.classList.toggle('overlay-open', isVisible);
+  overlayVisible = isVisible;
+  if (!isVisible) {
+    clearConfetti();
+  }
+}
+
+function hideRoundOverlay() {
+  setOverlayVisibility(false);
+  roundOverlay?.classList.remove('win', 'lose', 'neutral');
+}
+
+function showRoundOverlay(type, title, subtitle) {
+  if (!roundOverlay) {
+    return;
+  }
+  roundOverlay.classList.remove('win', 'lose', 'neutral');
+  roundOverlay.classList.add(type);
+  overlayTitle.textContent = title;
+  overlaySubtitle.textContent = subtitle;
+  if (type === 'win') {
+    emitConfetti();
+  } else {
+    clearConfetti();
+  }
+  overlayContinue.textContent = type === 'lose' ? 'Try again' : 'Back to the race';
+  setOverlayVisibility(true);
+}
 function startCountdown() {
   clearCountdown();
   countdownTimer = setInterval(() => {
@@ -160,6 +223,7 @@ function hideResultCard() {
 function renderRoundResult(result, players) {
   if (!result || !players.length) {
     hideResultCard();
+    hideRoundOverlay();
     return;
   }
   const findName = (id) => players.find((p) => p.id === id)?.name || 'Unknown';
@@ -180,6 +244,24 @@ function renderRoundResult(result, players) {
     clearTimeout(resultTimeout);
   }
   resultTimeout = setTimeout(hideResultCard, 6000);
+
+  const primaryPlayer = players.find((player) => player.id === playerId);
+  const isWinner = primaryPlayer && result.winners.includes(primaryPlayer.id);
+  const isLoser = primaryPlayer && result.losers.includes(primaryPlayer.id);
+  let overlayType = 'neutral';
+  let overlayTitle = 'Round complete!';
+  if (isWinner) {
+    overlayType = 'win';
+    overlayTitle = 'You escaped! 🏃‍♂️';
+  } else if (isLoser) {
+    overlayType = 'lose';
+    overlayTitle = 'You got caught';
+  }
+  showRoundOverlay(
+    overlayType,
+    overlayTitle,
+    `Winners: ${winners} • Losers: ${losers}`
+  );
 }
 
 function updateUI(state) {
@@ -199,6 +281,7 @@ function updateUI(state) {
   tapButton.disabled = !state.round.inProgress || !playerId;
   roundStatus.textContent = state.round.inProgress ? 'Round running' : 'Lobby';
   if (state.round.inProgress) {
+    hideRoundOverlay();
     startCountdown();
   } else {
     updateTimerDisplay();
@@ -334,5 +417,7 @@ durationInput.addEventListener('change', () => {
 tapButton.addEventListener('click', () => {
   send({ type: 'tap' });
 });
+
+overlayContinue?.addEventListener('click', hideRoundOverlay);
 
 resultDismiss?.addEventListener('click', hideResultCard);

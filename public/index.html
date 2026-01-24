@@ -62,6 +62,15 @@
       <button id="tapButton" disabled>Tap! Run!</button>
     </main>
 
+    <div id="roundOverlay" class="overlay hidden" role="alert">
+      <div class="overlay__content">
+        <h2 id="overlayTitle"></h2>
+        <p id="overlaySubtitle"></p>
+        <div class="confetti" id="confettiContainer"></div>
+        <button type="button" id="overlayContinue">Back to the race</button>
+      </div>
+    </div>
+
     <script>
       if (window.location.host.includes('vercel.app')) {
         window.RUN_FOR_YOUR_LIFE_WS_URL = 'wss://timingiseverything.onrender.com';
