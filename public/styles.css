@@ -248,7 +248,7 @@ header .tagline {
 }
 
 .lobby form {
-  background: #111;
+  background: rgba(17, 17, 17, 0.7);
   padding: 1.5rem;
   border-radius: 14px;
   width: min(420px, 100%);
