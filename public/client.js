@@ -20,6 +20,10 @@ const resultTitle = document.getElementById('resultTitle');
 const resultDismiss = document.getElementById('resultDismiss');
 const tapButton = document.getElementById('tapButton');
 
+function setLobbyVisibility(isVisible) {
+  document.body.classList.toggle('lobby-open', isVisible);
+}
+
 function buildEmojiAvatar(emoji, bg, fill) {
   const payload = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
@@ -54,6 +58,7 @@ let hostId = null;
 let roundState = null;
 let roundResult = null;
 let countdownTimer = null;
+setLobbyVisibility(true);
 let resultTimeout = null;
 
 avatarPreview.src = selectedAvatar;
@@ -268,6 +273,7 @@ socket.addEventListener('message', (event) => {
       hostId = message.hostId;
       durationInput.value = message.duration;
       lobby.classList.add('hidden');
+      setLobbyVisibility(false);
       joinStatus.textContent = '';
       break;
     }

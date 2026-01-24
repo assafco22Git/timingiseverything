@@ -36,6 +36,17 @@ main {
   margin: 0 auto;
 }
 
+body.lobby-open main,
+body.lobby-open .controls,
+body.lobby-open .track-board,
+body.lobby-open .scoreboard,
+body.lobby-open .result-card,
+body.lobby-open #tapButton {
+  filter: blur(0.15rem);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
 header {
   display: flex;
   justify-content: space-between;
@@ -245,6 +256,7 @@ header .tagline {
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  z-index: 20;
 }
 
 .lobby form {
